@@ -15,6 +15,7 @@
 from kafka import KafkaConsumer
 import json
 import logging
+import requests
 from analytics.moving_average import MovingAverageCalculator
 from analytics.alerts import PriceAlert
 
@@ -45,3 +46,15 @@ for message in consumer:
     if alert:
         print(alert)
         logging.warning(alert)
+
+        payload = {
+    "symbol": symbol,
+    "price": price,
+    "moving_average": round(avg, 2),
+    "alert": alert,
+    "timestamp": tick['timestamp']}
+
+try:
+    requests.post("http://localhost:5000/update", json=payload, timeout=1)
+except requests.exceptions.RequestException:
+    pass  # ignore if API is down

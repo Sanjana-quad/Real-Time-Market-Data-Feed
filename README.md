@@ -116,3 +116,40 @@ File: `analytics/alerts.py`
     AAPL | Price: 314.66 | MA(5): 312.12
     ⚠️ AAPL changed by 3.45%
     GOOG | Price: 201.52 | MA(5): 205.67
+
+# Milestone 4 – Real-Time Analytics API
+
+### 🎯 Objective
+Expose live analytics via a REST API for visualization dashboards.
+
+---
+
+## ⚙️ Components
+| Component | Description |
+|------------|--------------|
+| `api/app.py` | Flask REST API serving analytics |
+| `consumer/consumer.py` | Posts analytics updates to the API |
+| `producer/producer.py` | Continues producing stock ticks to Kafka |
+
+---
+
+## 🧠 Endpoints
+| Method | Endpoint | Description |
+|---------|-----------|-------------|
+| GET | `/data` | Get analytics for all stocks |
+| GET | `/data/<symbol>` | Get analytics for one stock |
+| POST | `/update` | Update data (used internally by consumer) |
+
+---
+
+## 🔗 Example Response
+```json
+[
+  {
+    "symbol": "AAPL",
+    "price": 312.45,
+    "moving_average": 310.78,
+    "alert": "⚠️ AAPL changed by 3.10%",
+    "timestamp": 1730871025.145
+  }
+]
