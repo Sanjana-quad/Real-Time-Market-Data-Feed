@@ -104,12 +104,12 @@ File: `analytics/alerts.py`
 
 ## ⚙️ How It Works
 
->consumer.py fetches stock ticks from Kafka.
+1. **consumer.py fetches stock ticks from Kafka.**
 
->For each tick:
->>Updates the moving average for that symbol.
->>Checks for price swings beyond a threshold.
->>Logs analytics in logs/analytics.log.
+2. **For each tick:**
+    - Updates the moving average for that symbol.
+    - Checks for price swings beyond a threshold.
+    - Logs analytics in `logs/analytics.log`.
 
 ## 🧠 Example Output
     ```bash
