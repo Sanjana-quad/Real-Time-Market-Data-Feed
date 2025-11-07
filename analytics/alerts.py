@@ -15,3 +15,5 @@ class PriceAlert:
         if abs(change_percent) >= self.threshold:
             return f"⚠️ {symbol} changed by {change_percent:.2f}%"
         return None
+    
+    
