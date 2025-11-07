@@ -85,3 +85,34 @@ Enhance the consumer to compute moving averages and trigger alerts for sudden pr
 - Implemented in-memory rolling computations using `deque` & `pandas`.
 - Designed modular consumer architecture (analytics separated from core logic).
 - Introduced structured logging for analytics events.
+
+
+# Milestone 3 – Analytics Layer (Moving Average + Alerts)
+
+### 🎯 Objective
+Enhance the consumer to perform live stock analytics — calculating moving averages and detecting large price swings in real time.
+
+---
+
+## 🧩 Components
+
+### 1. Moving Average Calculator
+File: `analytics/moving_average.py`
+
+### 2. Price Alert System
+File: `analytics/alerts.py`
+
+## ⚙️ How It Works
+
+>consumer.py fetches stock ticks from Kafka.
+
+>For each tick:
+>>Updates the moving average for that symbol.
+>>Checks for price swings beyond a threshold.
+>>Logs analytics in logs/analytics.log.
+
+## 🧠 Example Output
+    ```bash
+    AAPL | Price: 314.66 | MA(5): 312.12
+    ⚠️ AAPL changed by 3.45%
+    GOOG | Price: 201.52 | MA(5): 205.67
