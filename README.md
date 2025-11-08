@@ -143,16 +143,16 @@ Expose live analytics via a REST API for visualization dashboards.
 ---
 
 ## 🔗 Example Response
-```json
-[
-  {
-    "symbol": "AAPL",
-    "price": 312.45,
-    "moving_average": 310.78,
-    "alert": "⚠️ AAPL changed by 3.10%",
-    "timestamp": 1730871025.145
-  }
-]
+    ```json
+    [
+    {
+        "symbol": "AAPL",
+        "price": 312.45,
+        "moving_average": 310.78,
+        "alert": "⚠️ AAPL changed by 3.10%",
+        "timestamp": 1730871025.145
+    }
+    ]
 
 ## 🖥️ Milestone 5: Real-Time Dashboard Integration
 
