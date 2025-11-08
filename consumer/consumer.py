@@ -20,7 +20,11 @@ import time
 
 from analytics.moving_average import MovingAverageCalculator
 from analytics.alerts import PriceAlert
-from api.database import insert_record  # v3 database: updates cache + enqueues for DB
+# from api.database import insert_record  # v3 database: updates cache + enqueues for DB
+from api import database
+
+database.init_db()
+database.start_background_writer()
 
 logging.basicConfig(filename='logs/analytics.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
@@ -28,8 +32,8 @@ consumer = KafkaConsumer(
     'stock-ticks',
     bootstrap_servers='localhost:9092',
     auto_offset_reset='earliest',
-    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-    consumer_timeout_ms=1000  # so that the loop can be interrupted cleanly if needed
+    value_deserializer=lambda m: json.loads(m.decode('utf-8'))
+    # consumer_timeout_ms=1000  # so that the loop can be interrupted cleanly if needed
 )
 
 ma_calculator = MovingAverageCalculator(window_size=5)
@@ -64,7 +68,7 @@ for message in consumer:
     # "timestamp": tick['timestamp']}
 
     # Directly insert record into database layer (this updates cache + enqueues for DB)
-        insert_record(
+        database.insert_record(
             symbol=symbol,
             price=price,
             moving_average=round(avg, 2),
@@ -74,3 +78,4 @@ for message in consumer:
 
     except Exception as e:                              #Added logging and exception handling to avoid silent failure.
         logging.exception(f"Failed to process message: {e}")
+

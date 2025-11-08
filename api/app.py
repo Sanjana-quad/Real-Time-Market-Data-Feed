@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from threading import Lock
 from database import init_db, insert_record, get_latest_records, get_symbol_history, start_background_writer, stop_background_writer
 import atexit
@@ -30,7 +30,10 @@ def home():
         <li>POST /update — push analytics update (writes to both)</li>
     </ul>
     """
-
+@app.route('/dashboard')
+def dashboard():
+    """Render real-time dashboard page"""
+    return render_template('dashboard.html')
 
 @app.route('/update', methods=['POST'])
 def update_data():

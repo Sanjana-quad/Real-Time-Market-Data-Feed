@@ -153,3 +153,82 @@ Expose live analytics via a REST API for visualization dashboards.
     "timestamp": 1730871025.145
   }
 ]
+
+## 🖥️ Milestone 5: Real-Time Dashboard Integration
+
+### 🎯 Objective
+Build a live-updating dashboard to visualize stock prices and moving averages coming through Kafka → Consumer → SQLite → Flask.
+
+---
+
+### 🧰 Tools & Technologies
+- **Flask** — Serves the dashboard and API endpoints  
+- **Chart.js** — Frontend charting library for real-time line charts  
+- **SQLite (via database.py)** — Lightweight persistence layer  
+- **Fetch API (JavaScript)** — Periodically fetches new data from `/data` endpoint  
+- **Matplotlib (optional)** — For offline plotting in `plot_live.py`
+
+---
+
+### 📂 Project Structure Additions
+realtime-market-data-pipeline/
+-api/
+--templates/
+--- dashboard.html # Real-time Chart.js dashboard
+-- app.py # Flask backend serving API + dashboard
+--database.py # SQLite + async writer
+- analytics/
+-- plot_live.py
+
+
+---
+
+### ⚙️ How It Works
+1. **Producer** sends stock ticks (`symbol`, `price`, `timestamp`) to Kafka topic `stock-ticks`.  
+2. **Consumer** reads ticks → computes 5-point moving average → pushes to SQLite (via async writer).  
+3. **Flask app** exposes APIs:
+   - `/data` → latest cached analytics  
+   - `/data/<symbol>` → symbol history from SQLite  
+   - `/dashboard` → interactive Chart.js page that auto-refreshes data  
+4. **Dashboard** polls `/data` every 2 seconds and dynamically updates line charts.
+
+---
+
+### 🧠 What You’ll Learn
+| Concept | Learning Outcome |
+|----------|------------------|
+| Flask Integration | How to serve REST + frontend from one backend |
+| Chart.js | Building simple real-time web visualizations |
+| REST Polling | How clients continuously fetch and visualize streaming data |
+| Data Flow | Kafka → Consumer → DB → Flask → Dashboard |
+
+---
+
+### 🚀 Run Instructions
+1. Start Kafka services  
+   ```bash
+   docker-compose up -d
+
+2. Run the producer
+    ```bash
+    python producer.py
+
+3. Run the consumer
+    ```bash
+    python consumer.py
+
+4. Start Flask app
+    ```bash
+    python app.py
+
+5. Open browser → `http://localhost:5000/dashboard`
+
+---
+
+## 🧩 Next Steps (optional ideas)
+
+1. Add color-coded alerts (price spikes in red)
+
+2. Deploy dashboard using Render or Railway
+
+3. Convert to WebSocket-based live streaming instead of polling

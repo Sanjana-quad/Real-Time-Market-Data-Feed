@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Stock Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            padding: 20px;
+            color: #222;
+        }
+        h2 { text-align: center; }
+        .chart-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h2>📈 Real-Time Stock Analytics</h2>
+
+    <div id="charts"></div>
+
+    <script>
+        const chartRefs = {};
+        const refreshInterval = 2000; // 2 seconds
+
+        async function fetchData() {
+            const res = await fetch('/data');
+            const stocks = await res.json();
+            updateCharts(stocks);
+        }
+
+        function createChart(symbol) {
+            const container = document.createElement('div');
+            container.classList.add('chart-container');
+            container.innerHTML = `<h3>${symbol}</h3><canvas id="chart-${symbol}"></canvas>`;
+            document.getElementById('charts').appendChild(container);
+
+            const ctx = document.getElementById(`chart-${symbol}`).getContext('2d');
+            chartRefs[symbol] = {
+                labels: [],
+                prices: [],
+                movingAvg: [],
+                chart: new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Price',
+                                borderColor: '#007bff',
+                                data: [],
+                                fill: false
+                            },
+                            {
+                                label: 'Moving Average',
+                                borderColor: '#28a745',
+                                data: [],
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        animation: false,
+                        scales: { x: { display: false } }
+                    }
+                })
+            };
+        }
+
+        function updateCharts(stocks) {
+            stocks.forEach(stock => {
+                const { symbol, price, moving_average } = stock;
+                if (!chartRefs[symbol]) createChart(symbol);
+
+                const ref = chartRefs[symbol];
+                ref.labels.push(new Date().toLocaleTimeString());
+                ref.prices.push(price);
+                ref.movingAvg.push(moving_average);
+
+                if (ref.labels.length > 30) { // Keep last 30 points
+                    ref.labels.shift();
+                    ref.prices.shift();
+                    ref.movingAvg.shift();
+                }
+
+                ref.chart.data.labels = ref.labels;
+                ref.chart.data.datasets[0].data = ref.prices;
+                ref.chart.data.datasets[1].data = ref.movingAvg;
+                ref.chart.update();
+            });
+        }
+
+        setInterval(fetchData, refreshInterval);
+        fetchData();
+    </script>
+</body>
+</html>
